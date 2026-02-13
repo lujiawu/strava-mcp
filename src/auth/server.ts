@@ -6,7 +6,7 @@ import { saveConfig, loadConfig, saveClientCredentials, hasClientCredentials, cl
 
 const PORT = 8111;
 const REDIRECT_URI = `http://localhost:${PORT}/callback`;
-const REQUIRED_SCOPES = 'profile:read_all,activity:read_all,activity:read,profile:write';
+const REQUIRED_SCOPES = 'profile:read_all,activity:read_all,activity:read,activity:write,profile:write';
 
 export interface AuthResult {
     success: boolean;
