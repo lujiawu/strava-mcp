@@ -1315,3 +1315,71 @@ export async function getActivityPhotos(
         });
     }
 }
+
+/**
+ * Updates properties of a specific activity.
+ *
+ * @param accessToken - The Strava API access token.
+ * @param activityId - The ID of the activity to update.
+ * @param params - Object containing the properties to update (name, type, sport_type, description, private, commute, gear_id).
+ * @returns A promise that resolves to the updated activity data.
+ * @throws Throws an error if the API request fails or the response format is unexpected.
+ */
+export async function updateActivity(
+    accessToken: string,
+    activityId: number,
+    params: {
+        name?: string;
+        type?: string;
+        sport_type?: string;
+        description?: string;
+        private?: boolean;
+        commute?: boolean;
+        gear_id?: string | null;
+    }
+): Promise<StravaDetailedActivity> {
+    if (!accessToken) {
+        throw new Error("Strava access token is required.");
+    }
+    if (!activityId) {
+        throw new Error("Activity ID is required to update the activity.");
+    }
+
+    // Only include parameters that are provided
+    const updatePayload: Record<string, any> = {};
+    if (params.name !== undefined) updatePayload.name = params.name;
+    if (params.type !== undefined) updatePayload.type = params.type;
+    if (params.sport_type !== undefined) updatePayload.sport_type = params.sport_type;
+    if (params.description !== undefined) updatePayload.description = params.description;
+    if (params.private !== undefined) updatePayload.private = params.private;
+    if (params.commute !== undefined) updatePayload.commute = params.commute;
+    if (params.gear_id !== undefined) updatePayload.gear_id = params.gear_id;
+
+    try {
+        const response = await stravaApi.put<unknown>(
+            `activities/${activityId}`,
+            updatePayload,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        const validationResult = DetailedActivitySchema.safeParse(response.data);
+
+        if (!validationResult.success) {
+            console.error(`Strava API validation failed (updateActivity: ${activityId}):`, validationResult.error);
+            throw new Error(`Invalid data format received from Strava API: ${validationResult.error.message}`);
+        }
+        return validationResult.data;
+
+    } catch (error) {
+        return await handleApiError<StravaDetailedActivity>(error, `updateActivity for ID ${activityId}`, async () => {
+            // Use new token from environment after refresh
+            const newToken = process.env.STRAVA_ACCESS_TOKEN!;
+            return updateActivity(newToken, activityId, params);
+        });
+    }
+}

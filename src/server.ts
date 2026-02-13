@@ -29,6 +29,7 @@ import { getAllActivities } from './tools/getAllActivities.js';
 import { getActivityPhotosTool } from './tools/getActivityPhotos.js';
 import { getServerVersionTool } from "./tools/getServerVersion.js";
 import { connectStravaTool, disconnectStravaTool, checkStravaConnectionTool } from './tools/connectStrava.js';
+import { updateActivityTool } from './tools/updateActivity.js';
 import { loadConfig } from './config.js';
 
 // Import the actual client function
@@ -210,6 +211,14 @@ server.tool(
     checkStravaConnectionTool.description,
     {},
     checkStravaConnectionTool.execute
+);
+
+// --- Register update-activity tool ---
+server.tool(
+    updateActivityTool.name,
+    updateActivityTool.description,
+    updateActivityTool.inputSchema?.shape ?? {},
+    updateActivityTool.execute
 );
 
 // --- Helper Functions ---
