@@ -26,6 +26,7 @@ import { getActivityStreamsTool } from './tools/getActivityStreams.js';
 import { getActivityLapsTool } from './tools/getActivityLaps.js';
 import { getAthleteZonesTool } from './tools/getAthleteZones.js';
 import { getAllActivities } from './tools/getAllActivities.js';
+import { getActivityLapsTableTool } from './tools/getActivityLapsTable.js';
 import { getActivityPhotosTool } from './tools/getActivityPhotos.js';
 import { getServerVersionTool } from "./tools/getServerVersion.js";
 import { connectStravaTool, disconnectStravaTool, checkStravaConnectionTool } from './tools/connectStrava.js';
@@ -155,10 +156,18 @@ server.tool(
 
 // --- Register get-activity-laps tool (Simplified) ---
 server.tool(
-    getActivityLapsTool.name, 
+    getActivityLapsTool.name,
     getActivityLapsTool.description,
     getActivityLapsTool.inputSchema?.shape ?? {},
     getActivityLapsTool.execute
+);
+
+// --- Register get-activity-laps-table tool ---
+server.tool(
+    getActivityLapsTableTool.name,
+    getActivityLapsTableTool.description,
+    getActivityLapsTableTool.inputSchema?.shape ?? {},
+    getActivityLapsTableTool.execute
 );
 
 // --- Register get-athlete-zones tool ---
